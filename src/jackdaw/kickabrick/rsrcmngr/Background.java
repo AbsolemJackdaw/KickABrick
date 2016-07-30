@@ -15,7 +15,7 @@ public class Background {
 
 	public static float scale;
 	public static float sizeX;
-	public static float sizeY = 64 * scale;
+	public static float sizeY;
 
 	public double offset = 0;
 
@@ -92,7 +92,14 @@ public class Background {
 		if(offset < -(Window.getWidth())){
 			offset = 0;
 			indexScrollGround1 = indexScrollGround2;
-			indexScrollGround2 = rand.nextInt(imgs.length);
+			
+			int size = 0; //fix when only one image is used as background
+			if(imgs != null)
+				size = imgs.length;
+			else
+				size = 1;
+			
+			indexScrollGround2 = rand.nextInt(size);
 		}
 
 	}

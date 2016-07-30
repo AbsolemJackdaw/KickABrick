@@ -24,6 +24,9 @@ public class Player {
 
 	private Rectangle box;
 	
+	//start with no extra leg power
+	private double legForce = 0; 
+	
 	public Player() {
 
 		playerStill = Images.dude;
@@ -38,7 +41,7 @@ public class Player {
 
 		playerSize = Window.getGameScale(256);
 
-		centerX =   Window.getWidth() * 0.15; // Window.getWidth()/2 - playerSize/1.5d;
+		centerX =   Window.getWidth() * 0.15; //about a third of the screen width
 
 		centerY = Window.getHeight()/2 - 12;
 		
@@ -54,6 +57,7 @@ public class Player {
 		if(isKicking){
 			drawCenteredPlayer(playerKick, g);
 		}
+		
 		//check for if kicking before checking anything else, or it will never draw kicking
 		else if(!isWalking)
 			drawCenteredPlayer(playerStill, g);
@@ -66,7 +70,6 @@ public class Player {
 
 	public void update(){
 		
-
 		if(isWalking)
 			animationWalkTimer++;
 		
@@ -102,5 +105,13 @@ public class Player {
 	
 	public boolean isReadyToKick() {
 		return isKicking;
+	}
+	
+	public double getLegForce() {
+		return legForce;
+	}
+	
+	public void addLegForce(double legForce) {
+		this.legForce += legForce;
 	}
 }

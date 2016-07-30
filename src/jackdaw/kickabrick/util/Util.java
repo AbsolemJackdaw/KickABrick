@@ -3,8 +3,6 @@ package jackdaw.kickabrick.util;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import framework.window.Window;
-
 public class Util {
 
 	/**
@@ -75,8 +73,8 @@ public class Util {
 		g2d.drawImage(img, 
 				(int)(diagonal/2) - offsetX, 
 				(int)(diagonal/2) - offsetY, 
-				Window.getGameScale(scale),
-				Window.getGameScale(scale),
+				scale, //no need for window.getgamescael(x) here, as the scale has been passed down from the kickable object
+				scale,
 				null);
 
 		int centerX = (int) (centerImage ? diagonal/2 - offsetX : 0);

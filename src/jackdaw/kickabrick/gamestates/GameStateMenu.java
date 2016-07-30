@@ -14,6 +14,7 @@ import framework.gamestate.LoadState;
 import framework.input.MouseHandler;
 import framework.resourceLoaders.ImageLoader;
 import framework.window.Window;
+import jackdaw.kickabrick.entity.Entities;
 import jackdaw.kickabrick.player.Player;
 import jackdaw.kickabrick.rsrcmngr.BackGroundHelper;
 import jackdaw.kickabrick.rsrcmngr.Images;
@@ -43,14 +44,16 @@ public class GameStateMenu extends LoadState{
 	protected void loadResources() {
 
 		registerFont();
-		font = new Font("Fancy Pants NF", Font.PLAIN, 75);
+		font = new Font("Fancy Pants NF", Font.PLAIN, Window.getGameScale(75));
 
 		new Images();
 		player = new Player();
-
+		
 		//init these in loading resources, as the images have to be loaded to be displayed
 		BackGroundHelper.initScrollingBackground();
 		BackGroundHelper.stopScrollingBackground();
+		
+		new Entities();
 
 	}
 
@@ -84,7 +87,7 @@ public class GameStateMenu extends LoadState{
 			if(isDoneLoadingResources()){
 				if(offsetPlayerX >= 0){
 
-					g.setFont(new Font("Fancy Pants NF", Font.PLAIN, 35));
+					g.setFont(new Font("Fancy Pants NF", Font.PLAIN, Window.getGameScale(35)));
 					g.drawString("Click to Start", 
 							Window.getWidth()/2 - g.getFontMetrics().stringWidth("Click to Start")/2,
 							Window.getHeight() - (int)((double)Window.getHeight()/ 8d));
@@ -96,7 +99,7 @@ public class GameStateMenu extends LoadState{
 			Util.drawRotatedImage(loadingIcon, g, 
 					Window.getWidth() - Window.getGameScale(150), 
 					Window.getHeight() - Window.getGameScale(150),
-					loadRotation, 98, true);
+					loadRotation, Window.getGameScale(98), true);
 
 		//draw fading black screen when all is done and loaded
 		g.setColor(new Color(0f,0f,0f, alphaFade));
@@ -109,7 +112,7 @@ public class GameStateMenu extends LoadState{
 		super.update();
 
 		if(!isDoneLoadingResources())
-			loadRotation+=5;
+			loadRotation-=5;
 
 		BackGroundHelper.updateScrollingBackground();
 
@@ -153,6 +156,4 @@ public class GameStateMenu extends LoadState{
 			e.printStackTrace();
 		}
 	}
-
-	
 }

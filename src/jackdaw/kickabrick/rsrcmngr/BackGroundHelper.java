@@ -4,56 +4,43 @@ import java.awt.Graphics2D;
 
 public class BackGroundHelper {
 
-	private static Background trees = null;
-	private static Background sky = null;
-	private static Background bush1 = null;
-	private static Background bush2 = null;
-	private static Background stoep = null;
+	private static Background[] backgrounds = null; 
+
 
 	public static void initScrollingBackground(){
-		trees = new Background(Images.trees).moveScale(0.3);
-		bush1 = new Background(Images.bushes1).moveScale(1);
-		bush2 = new Background(Images.bushes2).moveScale(0.5);
-		sky = new Background(Images.sky).moveScale(0.1);
-		stoep = new Background(Images.stoep);
+
+		//are put in order to draw. most back first, most front last
+		backgrounds = new Background[]{
+				new Background(Images.sky).moveScale(0.1),
+				new Background(Images.trees).moveScale(0.3),
+				new Background(Images.leaves).moveScale(0.3),
+				new Background(Images.bushes2).moveScale(0.6),
+				new Background(Images.bushes1).moveScale(1),
+				new Background(Images.stoep).moveScale(1)
+		};
 	}
 
 	public static void drawScrollingBackground(Graphics2D g){
-
-		if(sky != null)
-			sky.drawMoving(g);
-		if(trees!=null)
-			trees.drawMoving(g);
-		if(bush2!=null)
-			bush2.drawMoving(g);
-		if(bush1!=null)
-			bush1.drawMoving(g);
-		if(stoep!=null)
-			stoep.draw(g);
-
+		if(backgrounds != null)
+			for(Background bg : backgrounds)
+				if(bg != null)
+					bg.drawMoving(g);
 	}
 
 	public static void updateScrollingBackground(){
-		if(sky != null)
-			sky.update();
-		if(trees!=null)
-			trees.update();
-		if(bush2!=null)
-			bush2.update();
-		if(bush1!=null)
-			bush1.update();
-		if(stoep!=null)
-			stoep.update();
+		if(backgrounds != null)
+			for(Background bg : backgrounds)
+				if(bg != null)
+					bg.update();
 	}
 
 	private static boolean hasStopped = false;
 	public static void stopScrollingBackground(){
 
 		if(!hasStopped){
-			sky.stopScrolling();
-			trees.stopScrolling();
-			bush1.stopScrolling();
-			bush2.stopScrolling();
+			for(Background bg : backgrounds)
+				if(bg != null)
+					bg.stopScrolling();
 			hasStopped = true;
 		}
 
@@ -61,11 +48,10 @@ public class BackGroundHelper {
 
 	public static void resumeScrollingBackground(){
 		if(hasStopped){
-			sky.resumeScrolling();
-			trees.resumeScrolling();
-			bush1.resumeScrolling();
-			bush2.resumeScrolling();
+			for(Background bg : backgrounds)
+				if(bg != null)
+					bg.resumeScrolling();
+			hasStopped = false;
 		}
-		hasStopped = false;
 	}
 }

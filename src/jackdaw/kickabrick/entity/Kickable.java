@@ -4,69 +4,97 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import framework.window.Window;
 import jackdaw.kickabrick.util.Util;
 
 public class Kickable {
 
 	//position on screen
-	private double posX, posY, posYDefault;
+	protected double posX, posY, posYDefault, prevPosY, prevPosX;
 
 	//img to draw
-	private BufferedImage img;
+	protected BufferedImage img;
 
 	//how hard and far you can kick the object
-	public int weight = 0;
+	protected double weight = 1;
 
 	//(force of kick - weight) might determine the kick.
 	//which means the player should get a little stronger every kick
 
 	//the speed and distance at which the kickable will fly
-	private double velocityX,velocityY, prevVolX, prevVolY;
+	protected double velocityX,velocityY, prevVolX, prevVolY;
 
-	private boolean inAir;
-	private boolean prevAir;
+	protected boolean inAir;
+	protected boolean prevAir;
 
-	private Rectangle box;
+	protected Rectangle box;
 
-	private boolean moveOnGround = true;
+	protected boolean moveOnGround = true;
 
 	public static double gravity = 2.1d/2d;
 
 	//number of bounces to make
-	private int bounces;
+	protected int bounces;
 
 	//kickables are square objects. this determines the onscreen size
-	private int size;
-	
-	private double bouncyness;
+	protected int size;
 
-	public Kickable(BufferedImage image, int size, int x, int y, double bouncyness){
+	protected double bouncyness;
+
+	protected KickableDecor affiliatedDecor = null;
+
+	public Kickable(BufferedImage image, int size, double bouncyness, double weight){
+		this(image, size, Window.getWidth() + Window.getGameScale(10), 
+				Window.getHeight() - Window.getGameScale(40), bouncyness, weight);
+	}
+
+	/**
+	 * @param image : the image t be displayed
+	 * @param size : the size the image will be scaled to and drawn on screen. generally bigger then the original size
+	 * @param x : position x on screen
+	 * @param y : position y on screen
+	 * @param bouncyness : lower value is more bouncy. range 1.0 ~ 1.99
+	 * @param weight : higher value is heavier.
+	 * */
+	public Kickable(BufferedImage image, int size, int x, int y, double bouncyness, double weight){
 		this.img = image;
 		this.size = size;
 
 		posX = x;
 		posYDefault = posY = y-size;
 
-		box = new Rectangle((int)posX, (int)posY-size, size, size);
-		
+		box = new Rectangle((int)posX, (int)posY, size, size);
+
 		this.bouncyness = bouncyness;
+
+		if(weight < 0.0)
+			weight = 0;
+		if(weight > 1.0)
+			weight = 1.0;
+
+		this.weight = weight;
 
 	}
 
 	private int imageRotation;
 	public void draw(Graphics2D g){
 
-		if(!isInAir())
-			g.drawImage(img, (int)posX, (int)posY, size, size, null);
-		else
-			Util.drawRotatedImage(img, g, (int)posX, (int)posY, imageRotation+=15, size, true);
+		//		g.setColor(Color.black);
+		//		g.fill(box);
 
-//		g.setColor(Color.black);
-//		g.draw(box);
+		if(!isInAir())
+			//			g.drawImage(img, (int)posX, (int)posY, size, size, null);
+			Util.drawRotatedImage(img, g, (int)posX, (int)posY, imageRotation, size, true);
+
+		else
+			Util.drawRotatedImage(img, g, (int)posX, (int)posY, imageRotation+=30, size, true);
 
 	}
 
 	public void update(){
+		//set previous positions
+		prevPosY = posY;
+		prevPosX = posX;
 
 		if(inAir && !prevAir)
 			prevAir = true;
@@ -80,9 +108,9 @@ public class Kickable {
 
 			posY -= velocityY;
 
-			velocityY -= gravity;
-			//let weight affect gravity ?
-			
+			velocityY -= gravity + (1-weight); //invert weight here, as a higher number makes it fall faster
+			//let weight affect gravity ? TODO
+
 			if(posY > posYDefault){
 
 				//reset all if no bounces left
@@ -114,14 +142,12 @@ public class Kickable {
 		}
 
 		box.setLocation((int)posX, (int)posY);
-
 	}
 
 	/**Kick the kickable !*/
-	public void kick(double force, double angle){
-		
-		//TODO
-		//let weight affect force so it goes slower
+	public void kick(double force, double angle, double forcemodifier){
+
+		force = force * (weight+forcemodifier);
 
 		inAir = true;
 
@@ -129,7 +155,7 @@ public class Kickable {
 		prevVolY = velocityY = force * Math.sin(Math.toRadians(angle));
 
 		bounces = (int)(force/6d);
-		
+
 	}
 
 	public boolean isInAir() {
@@ -146,5 +172,59 @@ public class Kickable {
 
 	public void setMoving(boolean b){
 		moveOnGround = b;
+	}
+
+	public boolean getMoving(){
+		return moveOnGround;
+	}
+
+	public void setWeight(double weight) {
+
+		this.weight = weight;
+	}
+
+	public double getWeight() {
+		return weight;
+	}
+
+	public boolean isVisible(){
+		return posX < Window.getWidth()+ Window.getGameScale(10) && posX > -50;
+	}
+
+	public Kickable setAffiliatedDecor(KickableDecor affiliatedDecor) {
+		this.affiliatedDecor = affiliatedDecor;
+		return this;
+	}
+
+	public KickableDecor getAffiliatedDecor() {
+
+		if(affiliatedDecor instanceof KickableDecorMoving)
+			return (KickableDecorMoving)affiliatedDecor;
+		else
+			return affiliatedDecor;
+	}
+
+	public boolean hasAffiliatedDecor(){
+		return affiliatedDecor != null;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public double getPosX() {
+		return posX;
+	}
+
+	public double getPosY() {
+		return posY;
+	}
+
+	public boolean isFalling(){
+		return isInAir() && posY > prevPosY;
+	}
+
+	public boolean isGoingUp(){
+		return isInAir() && posY < prevPosY;
 	}
 }
