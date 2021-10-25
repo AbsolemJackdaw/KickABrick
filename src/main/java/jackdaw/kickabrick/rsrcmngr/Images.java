@@ -8,8 +8,8 @@ import java.awt.image.BufferedImage;
 public class Images {
 
     public static BufferedImage dude;
-    public static BufferedImage dudeWalk1;
-    public static BufferedImage dudeWalk2;
+    //    public static BufferedImage dudeWalk1;
+//    public static BufferedImage dudeWalk2;
     public static BufferedImage dudeKick;
 
     public static BufferedImage arrow;
@@ -34,13 +34,13 @@ public class Images {
     public static BufferedImage[] trees = new BufferedImage[3];
     public static BufferedImage[] leaves = new BufferedImage[3];
     public static BufferedImage[] sky = new BufferedImage[3];
+    public static BufferedImage[] walk = new BufferedImage[5];
+    public static BufferedImage[] cig = new BufferedImage[6];
 
     public Images() {
 
-        dude = ImageLoader.loadSprite(new ResourceLocation("/dude.png"));
-        dudeWalk1 = ImageLoader.loadSprite(new ResourceLocation("/dudewalk1.png"));
-        dudeWalk2 = ImageLoader.loadSprite(new ResourceLocation("/dudewalk2.png"));
-        dudeKick = ImageLoader.loadSprite(new ResourceLocation("/dudekick.png"));
+        dude = ImageLoader.loadSprite(new ResourceLocation("/dude/still.png"));
+        dudeKick = ImageLoader.loadSprite(new ResourceLocation("/dude/kick.png"));
 
         overlay_night_background = ImageLoader.loadSprite(new ResourceLocation("/nightoverlay.png"));
 
@@ -60,6 +60,9 @@ public class Images {
         pizza_decor = ImageLoader.loadSprite(new ResourceLocation("/kickables/decor/pizza.png"));
         bottle = ImageLoader.loadSprite(new ResourceLocation("/kickables/bottle.png"));
         bottle_decor = ImageLoader.loadSprite(new ResourceLocation("/kickables/decor/bottle.png"));
+
+        walk = ImageLoader.loadArray(new ResourceLocation("/dude/walk/walk"), walk.length);
+        cig = ImageLoader.loadArray(new ResourceLocation("/cigar/cig"), cig.length);
 
         bin = ImageLoader.loadSprite(new ResourceLocation("/bin.png"));
 
