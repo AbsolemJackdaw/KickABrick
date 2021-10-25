@@ -1,15 +1,18 @@
 package jackdaw.kickabrick.main;
 
+import framework.GameState;
 import framework.GameStateHandler;
 import jackdaw.kickabrick.gamestates.GameStateGame;
 import jackdaw.kickabrick.gamestates.GameStateMenu;
 
 public class GameStateHandlerKick extends GameStateHandler {
 
-	public GameStateHandlerKick() {
+    public static final String GAME = "walkway_gamestate";
 
-		addGameState(GameStateMenu.class, 0);
-		addGameState(GameStateGame.class, 1);
+    public GameStateHandlerKick() {
 
-	}
+        addGameState(GameStateMenu.class, GameState.FIRST_SCREEN);
+        addGameState(GameStateGame.class, GAME);
+
+    }
 }

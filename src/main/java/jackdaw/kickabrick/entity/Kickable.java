@@ -167,7 +167,7 @@ public class Kickable {
 	}
 
 	public boolean landed(){
-		return prevAir==true && inAir==false && bounces == 0;
+		return prevAir && !inAir && bounces == 0;
 	}
 
 	public void setMoving(boolean b){

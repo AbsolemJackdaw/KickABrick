@@ -1,159 +1,157 @@
 package jackdaw.kickabrick.gamestates;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-
 import framework.GameStateHandler;
 import framework.gamestate.LoadState;
 import framework.input.MouseHandler;
 import framework.resourceLoaders.ImageLoader;
+import framework.resourceLoaders.ResourceLocation;
 import framework.window.Window;
 import jackdaw.kickabrick.entity.Entities;
+import jackdaw.kickabrick.main.GameStateHandlerKick;
 import jackdaw.kickabrick.player.Player;
 import jackdaw.kickabrick.rsrcmngr.BackGroundHelper;
 import jackdaw.kickabrick.rsrcmngr.Images;
 import jackdaw.kickabrick.util.Util;
 
-public class GameStateMenu extends LoadState{
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
-	private Player player;
-	private float alphaFade = 0f;
-	private Font font = null;
+public class GameStateMenu extends LoadState {
 
-	//when the player should enter frame
-	private boolean queuePlayer = false;
-	//the screen offset the player should have from the center
-	private double offsetPlayerX = -1;
+    private Player player;
+    private float alphaFade = 0f;
+    private Font font = null;
 
-	private BufferedImage loadingIcon;
-	private int loadRotation = 0; 
+    //when the player should enter frame
+    private boolean queuePlayer = false;
+    //the screen offset the player should have from the center
+    private double offsetPlayerX = -1;
 
-	public GameStateMenu(GameStateHandler gsh) {
-		super(gsh);
+    private BufferedImage loadingIcon;
+    private int loadRotation = 0;
 
-		loadingIcon = ImageLoader.loadSprite("/loadingIcon.png");
-	}
+    public GameStateMenu(GameStateHandler gsh) {
+        super(gsh);
 
-	@Override
-	protected void loadResources() {
+        loadingIcon = ImageLoader.loadSprite(new ResourceLocation("/loadingIcon.png"));
+    }
 
-		registerFont();
-		font = new Font("Fancy Pants NF", Font.PLAIN, Window.getGameScale(75));
+    @Override
+    protected void loadResources() {
 
-		new Images();
-		player = new Player();
-		
-		//init these in loading resources, as the images have to be loaded to be displayed
-		BackGroundHelper.initScrollingBackground();
-		BackGroundHelper.stopScrollingBackground();
-		
-		new Entities();
+        registerFont();
+        font = new Font("Fancy Pants NF", Font.PLAIN, Window.getGameScale(75));
 
-	}
+        new Images();
+        player = new Player();
 
-	@Override
-	public void draw(Graphics2D g) {
+        //init these in loading resources, as the images have to be loaded to be displayed
+        BackGroundHelper.initScrollingBackground();
+        BackGroundHelper.stopScrollingBackground();
 
-		g.setColor(Color.black);
-		g.fillRect(0, 0, Window.getWidth(), Window.getHeight());
+        new Entities();
 
-		BackGroundHelper.drawScrollingBackground(g);
+    }
 
-		//Draw player when loaded
-		if(player != null){
-			player.draw(g);
-		}
+    @Override
+    public void draw(Graphics2D g) {
 
-		//draw game title
-		if(font != null){
-			g.setFont(font);
+        g.setColor(Color.black);
+        g.fillRect(0, 0, Window.getWidth(), Window.getHeight());
 
-			g.setColor(Color.red.darker().darker());
-			g.drawString("Kick A Brick",
-					Window.getWidth()/2 - g.getFontMetrics().stringWidth("Kick A Brick")/2,
-					(int)((double)Window.getHeight()/ 3d));
+        BackGroundHelper.drawScrollingBackground(g);
 
-			g.setColor(new Color(1f,1f,1f,.7f));
-			g.drawString("Kick A Brick",
-					Window.getWidth()/2 - g.getFontMetrics().stringWidth("Kick A Brick")/2 - 2,
-					(int)((double)Window.getHeight()/ 3d) - 2);
+        //Draw player when loaded
+        if (player != null) {
+            player.draw(g);
+        }
 
-			if(isDoneLoadingResources()){
-				if(offsetPlayerX >= 0){
+        //draw game title
+        if (font != null) {
+            g.setFont(font);
 
-					g.setFont(new Font("Fancy Pants NF", Font.PLAIN, Window.getGameScale(35)));
-					g.drawString("Click to Start", 
-							Window.getWidth()/2 - g.getFontMetrics().stringWidth("Click to Start")/2,
-							Window.getHeight() - (int)((double)Window.getHeight()/ 8d));
-				}
-			}
-		}
+            g.setColor(Color.red.darker().darker());
+            g.drawString("Kick A Brick",
+                    Window.getWidth() / 2 - g.getFontMetrics().stringWidth("Kick A Brick") / 2,
+                    (int) ((double) Window.getHeight() / 3d));
 
-		if(!isDoneLoadingResources())
-			Util.drawRotatedImage(loadingIcon, g, 
-					Window.getWidth() - Window.getGameScale(150), 
-					Window.getHeight() - Window.getGameScale(150),
-					loadRotation, Window.getGameScale(98), true);
+            g.setColor(new Color(1f, 1f, 1f, .7f));
+            g.drawString("Kick A Brick",
+                    Window.getWidth() / 2 - g.getFontMetrics().stringWidth("Kick A Brick") / 2 - 2,
+                    (int) ((double) Window.getHeight() / 3d) - 2);
 
-		//draw fading black screen when all is done and loaded
-		g.setColor(new Color(0f,0f,0f, alphaFade));
-		g.fillRect(0, 0, Window.getWidth(), Window.getHeight());
+            if (isDoneLoadingResources()) {
+                if (offsetPlayerX >= 0) {
 
-	}
+                    g.setFont(new Font("Fancy Pants NF", Font.PLAIN, Window.getGameScale(35)));
+                    g.drawString("Click to Start",
+                            Window.getWidth() / 2 - g.getFontMetrics().stringWidth("Click to Start") / 2,
+                            Window.getHeight() - (int) ((double) Window.getHeight() / 8d));
+                }
+            }
+        }
 
-	@Override
-	public void update() {
-		super.update();
+        if (!isDoneLoadingResources())
+            Util.drawRotatedImage(loadingIcon, g,
+                    Window.getWidth() - Window.getGameScale(150),
+                    Window.getHeight() - Window.getGameScale(150),
+                    loadRotation, Window.getGameScale(98), true);
 
-		if(!isDoneLoadingResources())
-			loadRotation-=5;
+        //draw fading black screen when all is done and loaded
+        g.setColor(new Color(0f, 0f, 0f, alphaFade));
+        g.fillRect(0, 0, Window.getWidth(), Window.getHeight());
 
-		BackGroundHelper.updateScrollingBackground();
+    }
 
-		//scroll background when player is centered
-		if(offsetPlayerX >= 0d)
-			BackGroundHelper.resumeScrollingBackground();
+    @Override
+    public void update() {
+        super.update();
 
-		//update player position
-		//set offset for player once player is loaded
-		if(player != null){
-			player.update();
-			if(queuePlayer && offsetPlayerX < 0){
-				offsetPlayerX+=1d;
-				player.drawOffsetX(offsetPlayerX);
-			}
-			if(!queuePlayer){
-				queuePlayer = true;
-				offsetPlayerX = Window.getGameScale(-300);
-				player.drawOffsetX(offsetPlayerX);
-			}
-		}
+        if (!isDoneLoadingResources())
+            loadRotation -= 5;
+
+        BackGroundHelper.updateScrollingBackground();
+
+        //scroll background when player is centered
+        if (offsetPlayerX >= 0d)
+            BackGroundHelper.resumeScrollingBackground();
+
+        //update player position
+        //set offset for player once player is loaded
+        if (player != null) {
+            player.update();
+            if (queuePlayer && offsetPlayerX < 0) {
+                offsetPlayerX += 1d;
+                player.drawOffsetX(offsetPlayerX);
+            }
+            if (!queuePlayer) {
+                queuePlayer = true;
+                offsetPlayerX = Window.getGameScale(-300);
+                player.drawOffsetX(offsetPlayerX);
+            }
+        }
 
 
-		if(isDoneLoadingResources() && offsetPlayerX >= 0){
+        if (isDoneLoadingResources() && offsetPlayerX >= 0) {
 
-			if(offsetPlayerX >= 0 && MouseHandler.click){
-				gsh.changeGameState(1);
-			}
-		}
-	}
+            if (MouseHandler.click) {
+                gsh.changeGameState(GameStateHandlerKick.GAME);
+            }
+        }
+    }
 
-	private void registerFont(){
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    private void registerFont() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-		InputStream stream = null;
-		stream = GameStateMenu.class.getClassLoader().getResourceAsStream("FancyPants.ttf");
+        InputStream stream = null;
+        stream = GameStateMenu.class.getClassLoader().getResourceAsStream("FancyPants.ttf");
 
-		try {
-			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, stream));
-		} catch (IOException|FontFormatException e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, stream));
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
+    }
 }
